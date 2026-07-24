@@ -1,0 +1,6 @@
+{
+  "name": "Marangoz Atölyesi Yönetim Uygulaması",
+  "description": "Ahşap ve marangoz atölyeleri için maliyet hesaplama, hammadde yönetimi, sipariş takibi ve gelir-gider finans sistemi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
