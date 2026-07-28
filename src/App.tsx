@@ -34,10 +34,55 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
 
+  // Toast Notification state for sync status
+  const [syncToast, setSyncToast] = useState<{ message: string; type: 'info' | 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, type: 'info' | 'success' | 'error' = 'info', duration = 3500) => {
+    setSyncToast({ message, type });
+    setTimeout(() => setSyncToast(null), duration);
+  };
+
   // Save to local storage on change
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataStore));
   }, [dataStore]);
+
+  // Auto-Sync / Auto-Pull on App Mount or query param ?syncUrl=
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const querySyncUrl = params.get('syncUrl');
+
+    let activeUrl = dataStore.settings.googleAppsScriptUrl;
+
+    if (querySyncUrl && querySyncUrl.trim().startsWith('http')) {
+      activeUrl = querySyncUrl.trim();
+      // Clean up URL parameter from browser history
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showToast('🔗 Mobil eşleme bağlantısı algılandı! Verileriniz çekiliyor...', 'info', 4000);
+    } else if (activeUrl) {
+      showToast('☁️ E-Tablo verileri güncelleniyor...', 'info', 2500);
+    }
+
+    if (activeUrl) {
+      setIsSyncing(true);
+      pullFromGoogleScript(activeUrl).then((res) => {
+        setIsSyncing(false);
+        if (res.success && res.data) {
+          setDataStore({
+            ...res.data,
+            settings: {
+              ...res.data.settings,
+              googleAppsScriptUrl: activeUrl, // Ensure active URL is saved
+              lastSyncedAt: new Date().toISOString(),
+            },
+          });
+          showToast('✅ E-Tablodan güncel verileriniz yüklendi!', 'success', 4000);
+        } else if (res.message && !res.message.includes('Boş veri')) {
+          console.warn('Auto-pull info:', res.message);
+        }
+      });
+    }
+  }, []);
 
   // Active theme
   const theme = THEME_OPTIONS[dataStore.settings.activeTheme] || THEME_OPTIONS.oak;
@@ -54,6 +99,7 @@ export default function App() {
       return;
     }
     setIsSyncing(true);
+    showToast('⬆️ E-Tabloya veriler gönderiliyor...', 'info', 3000);
     const res = await pushToGoogleScript(dataStore.settings.googleAppsScriptUrl, dataStore);
     setIsSyncing(false);
     if (res.success) {
@@ -61,9 +107,9 @@ export default function App() {
         ...prev,
         settings: { ...prev.settings, lastSyncedAt: new Date().toISOString() },
       }));
-      alert('Bulut Senkronizasyonu Başarılı! ' + res.message);
+      showToast('✅ E-Tabloya başarıyla gönderildi!', 'success', 4000);
     } else {
-      alert('Hata: ' + res.message);
+      showToast('❌ Hata: ' + res.message, 'error', 5000);
     }
   };
 
@@ -73,13 +119,21 @@ export default function App() {
       return;
     }
     setIsSyncing(true);
+    showToast('⬇️ E-Tablodan veriler çekiliyor...', 'info', 3000);
     const res = await pullFromGoogleScript(dataStore.settings.googleAppsScriptUrl);
     setIsSyncing(false);
     if (res.success && res.data) {
-      setDataStore(res.data);
-      alert('E-Tablodan verileriniz güncellendi!');
+      setDataStore({
+        ...res.data,
+        settings: {
+          ...res.data.settings,
+          googleAppsScriptUrl: dataStore.settings.googleAppsScriptUrl,
+          lastSyncedAt: new Date().toISOString(),
+        },
+      });
+      showToast('✅ E-Tablodan verileriniz güncellendi!', 'success', 4000);
     } else {
-      alert('Hata: ' + res.message);
+      showToast('❌ Hata: ' + res.message, 'error', 5000);
     }
   };
 
@@ -267,6 +321,21 @@ export default function App() {
         />
       ) : (
         <>
+          {/* TOAST NOTIFICATION OVERLAY */}
+          {syncToast && (
+            <div className="fixed top-20 right-4 z-50 animate-bounce">
+              <div className={`px-4 py-2.5 rounded-xl shadow-xl text-xs font-bold flex items-center gap-2 border ${
+                syncToast.type === 'success'
+                  ? 'bg-emerald-800 text-white border-emerald-600'
+                  : syncToast.type === 'error'
+                  ? 'bg-red-800 text-white border-red-600'
+                  : 'bg-slate-900 text-amber-400 border-amber-500/40'
+              }`}>
+                <span>{syncToast.message}</span>
+              </div>
+            </div>
+          )}
+
           {/* TOP NAVBAR */}
           <Navbar
             activeMainTab={activeMainTab}
@@ -274,7 +343,8 @@ export default function App() {
             theme={theme}
             onOpenSettings={() => setIsSettingsOpen(true)}
             onLock={() => setIsUnlocked(false)}
-            onSync={handleSyncPush}
+            onSyncPush={handleSyncPush}
+            onSyncPull={handleSyncPull}
             isSyncing={isSyncing}
             hasGasUrl={!!dataStore.settings.googleAppsScriptUrl}
             lastSyncedAt={dataStore.settings.lastSyncedAt}

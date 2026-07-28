@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: './',
+    base: '/Atolye-Yonetim/',
     build: {
       outDir: 'docs',
     },

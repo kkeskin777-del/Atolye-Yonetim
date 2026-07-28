@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Palette, Cloud, Lock, DollarSign, Download, Upload, Copy, Check, FileCode, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Palette, Cloud, Lock, DollarSign, Download, Upload, Copy, Check, FileCode, CheckCircle2, Smartphone, Link as LinkIcon } from 'lucide-react';
 import { ThemeId, AppSettings, AppDataStore } from '../types';
 import { THEME_OPTIONS, ThemeOption } from '../utils/themeConfig';
 import { GAS_SCRIPT_TEMPLATE } from '../utils/gasSync';
@@ -32,6 +32,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [gasUrl, setGasUrl] = useState(settings.googleAppsScriptUrl);
   const [usdRate, setUsdRate] = useState(settings.usdRate);
   const [copiedScript, setCopiedScript] = useState(false);
+  const [copiedPairingLink, setCopiedPairingLink] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const handleSave = () => {
@@ -49,6 +50,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     navigator.clipboard.writeText(GAS_SCRIPT_TEMPLATE);
     setCopiedScript(true);
     setTimeout(() => setCopiedScript(false), 3000);
+  };
+
+  const handleCopyPairingLink = () => {
+    if (!gasUrl.trim()) return;
+    const pairingUrl = `${window.location.origin}${window.location.pathname}?syncUrl=${encodeURIComponent(gasUrl.trim())}`;
+    navigator.clipboard.writeText(pairingUrl);
+    setCopiedPairingLink(true);
+    setTimeout(() => setCopiedPairingLink(false), 3000);
   };
 
   const handleExportJSON = () => {
@@ -102,54 +111,54 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           </button>
         </div>
 
-        {/* Tab Buttons */}
-        <div className={`flex border-b ${currentTheme.borderClass} px-6 bg-black/5 dark:bg-white/5 gap-2 pt-2`}>
+        {/* Tab Buttons - Responsive Grid for Mobile & Desktop */}
+        <div className={`grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-3 border-b ${currentTheme.borderClass} bg-black/5 dark:bg-white/5`}>
           <button
             onClick={() => setActiveTab('theme')}
-            className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all ${
               activeTab === 'theme'
-                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/50 dark:bg-black/50'
+                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/80 dark:bg-black/80 shadow-xs'
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <Palette className="w-4 h-4" />
-            Tema & Yazı Tipi (5 Seçenek)
+            <Palette className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Tema & Font</span>
           </button>
 
           <button
             onClick={() => setActiveTab('cloud')}
-            className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all ${
               activeTab === 'cloud'
-                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/50 dark:bg-black/50'
+                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/80 dark:bg-black/80 shadow-xs'
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <Cloud className="w-4 h-4" />
-            Google Sheets Senkronizasyon (GAS)
+            <Cloud className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Bulut Sync</span>
           </button>
 
           <button
             onClick={() => setActiveTab('security')}
-            className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all ${
               activeTab === 'security'
-                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/50 dark:bg-black/50'
+                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/80 dark:bg-black/80 shadow-xs'
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <Lock className="w-4 h-4" />
-            Şifre & Döviz
+            <Lock className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Şifre & Döviz</span>
           </button>
 
           <button
             onClick={() => setActiveTab('backup')}
-            className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold flex items-center gap-2 border-b-2 transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border transition-all ${
               activeTab === 'backup'
-                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/50 dark:bg-black/50'
+                ? 'border-amber-600 text-amber-700 dark:text-amber-400 bg-white/80 dark:bg-black/80 shadow-xs'
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <Download className="w-4 h-4" />
-            Yedekleme
+            <Download className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Yedekleme</span>
           </button>
         </div>
 
@@ -267,24 +276,48 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
               {/* Action sync buttons */}
               {gasUrl.trim() && (
-                <div className="flex gap-3 pt-2">
-                  <button
-                    onClick={onSyncPush}
-                    disabled={isSyncing}
-                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Mevcut Verileri E-Tabloya Gönder (Push)
-                  </button>
+                <div className="space-y-4 pt-2">
+                  <div className="flex gap-3">
+                    <button
+                      onClick={onSyncPush}
+                      disabled={isSyncing}
+                      className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Mevcut Verileri E-Tabloya Gönder (Push)
+                    </button>
 
-                  <button
-                    onClick={onSyncPull}
-                    disabled={isSyncing}
-                    className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                  >
-                    <Download className="w-4 h-4" />
-                    E-Tablodan Verileri Çek (Pull)
-                  </button>
+                    <button
+                      onClick={onSyncPull}
+                      disabled={isSyncing}
+                      className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm"
+                    >
+                      <Download className="w-4 h-4" />
+                      E-Tablodan Verileri Çek (Pull)
+                    </button>
+                  </div>
+
+                  {/* Mobile Pairing Card */}
+                  <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-950 dark:text-amber-200 text-xs space-y-2">
+                    <div className="font-bold flex items-center gap-1.5 text-sm text-amber-800 dark:text-amber-300">
+                      <Smartphone className="w-4 h-4" />
+                      Telefon & Tablet Tek Tıkla Cihaz Eşleme Bağlantısı
+                    </div>
+                    <p className="leading-relaxed">
+                      PC'de girdiğiniz verilerin telefonda anında görünmesi için aşağıdaki eşleme bağlantısını kopyalayıp WhatsApp, e-posta veya mesajla telefonunuza gönderin.
+                      Telefonda bu linke bir kez tıkladığınızda Google Sheets URL'si otomatik tanımlanır ve veriler çekilir!
+                    </p>
+
+                    <div className="pt-1">
+                      <button
+                        onClick={handleCopyPairingLink}
+                        className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-2 transition-colors shadow-xs"
+                      >
+                        {copiedPairingLink ? <CheckCircle2 className="w-4 h-4 text-emerald-300" /> : <LinkIcon className="w-4 h-4" />}
+                        {copiedPairingLink ? 'Eşleme Bağlantısı Kopyalandı!' : 'Mobil Eşleme Linkini Kopyala'}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

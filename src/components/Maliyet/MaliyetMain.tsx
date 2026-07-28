@@ -75,78 +75,78 @@ export const MaliyetMain: React.FC<MaliyetMainProps> = ({
   return (
     <div className="space-y-6">
       
-      {/* Sub Tab Bar */}
-      <div className={`p-2 rounded-2xl ${theme.cardClass} border ${theme.borderClass} shadow-sm overflow-x-auto`}>
-        <div className="flex items-center gap-1.5 min-w-max">
+      {/* Sub Tab Bar - Responsive Grid for Mobile & Desktop */}
+      <div className={`p-2 rounded-2xl ${theme.cardClass} border ${theme.borderClass} shadow-sm`}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1.5">
           
           <button
             onClick={() => setActiveSubTab('hesaplama')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSubTab === 'hesaplama'
                 ? theme.activeNavClass
                 : 'text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5'
             }`}
           >
-            <Calculator className="w-4 h-4" />
-            <span>Hesaplama Sekmesi</span>
+            <Calculator className="w-4 h-4 shrink-0" />
+            <span className="truncate">Hesaplama</span>
           </button>
 
           <button
             onClick={() => setActiveSubTab('hammadde')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSubTab === 'hammadde'
                 ? theme.activeNavClass
                 : 'text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5'
             }`}
           >
-            <Layers className="w-4 h-4" />
-            <span>Hammadde Sekmesi</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10">
+            <Layers className="w-4 h-4 shrink-0" />
+            <span className="truncate">Hammadde</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 shrink-0">
               {rawMaterials.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveSubTab('urunlerim')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSubTab === 'urunlerim'
                 ? theme.activeNavClass
                 : 'text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5'
             }`}
           >
-            <Package className="w-4 h-4" />
-            <span>Ürünlerim Sekmesi</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10">
+            <Package className="w-4 h-4 shrink-0" />
+            <span className="truncate">Ürünlerim</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 shrink-0">
               {products.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveSubTab('genel_giderler')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSubTab === 'genel_giderler'
                 ? theme.activeNavClass
                 : 'text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5'
             }`}
           >
-            <ShoppingCart className="w-4 h-4" />
-            <span>Genel Giderler Sekmesi</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10">
+            <ShoppingCart className="w-4 h-4 shrink-0" />
+            <span className="truncate">Genel Gider</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-black/10 dark:bg-white/10 shrink-0">
               {generalExpenses.length}
             </span>
           </button>
 
           <button
             onClick={() => setActiveSubTab('siparisler')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+            className={`col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
               activeSubTab === 'siparisler'
                 ? theme.activeNavClass
                 : 'text-slate-600 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5'
             }`}
           >
-            <ShoppingBag className="w-4 h-4" />
-            <span>Siparişler Sekmesi</span>
-            <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-500 text-white font-bold">
+            <ShoppingBag className="w-4 h-4 shrink-0" />
+            <span className="truncate">Siparişler</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-500 text-white font-bold shrink-0">
               {orders.length}
             </span>
           </button>
